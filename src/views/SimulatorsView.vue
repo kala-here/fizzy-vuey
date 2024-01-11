@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import Simulators from '../components/Simulators.vue'
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <Simulators />
   </main>
 </template>

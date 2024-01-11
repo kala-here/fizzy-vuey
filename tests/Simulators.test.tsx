@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import TheWelcome from '@/components/TheWelcome.vue'
+import Simulators from '@/components/Simulators.vue'
 import { describe, test, expect, vi } from 'vitest'
 import { fetchSimulator } from '@/services/simulator.service'
 
@@ -17,9 +17,9 @@ vi.mock('@/services/simulator.service.ts', async (importOriginal) => {
   }
 })
 
-describe('TheWelcome', () => {
+describe('Simulators', () => {
   test('displays simulator names fetched from API', async () => {
-    const wrapper = mount(TheWelcome)
+    const wrapper = mount(Simulators)
     await wrapper.vm.$nextTick()
     expect(wrapper.text()).toContain('Simulators')
     await flushPromises()
