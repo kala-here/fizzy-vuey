@@ -1,35 +1,33 @@
-import { mount } from '@vue/test-utils'
-import TheWelcome from '../src/components/TheWelcome.vue'
+import { mount, flushPromises } from '@vue/test-utils'
+import TheWelcome from '@/components/TheWelcome.vue'
 import { describe, test, expect, vi } from 'vitest'
-import { fetchSimulator } from '../src/services/simulator.service'
+import { fetchSimulator } from '@/services/simulator.service'
 
-vi.mock('./path/to/module.js', async (importOriginal) => {
-  const mod = await importOriginal<typeof import('./path/to/module.js')>()
+vi.mock('@/services/simulator.service.ts', async (importOriginal) => {
+  const service = await importOriginal<typeof import('@/services/simulator.service')>()
+
   return {
-    ...mod,
-    // replace some exports
-    namedExport: vi.fn(),
+    ...service,
+    fetchSimulator: vi.fn(() =>
+      Promise.resolve([
+        { id: 1, name: 'simulator 1', price: 10, description: 'Description 1' },
+        { id: 2, name: 'simulator 2', price: 20, description: 'Description 2' }
+      ])
+    )
   }
 })
+
 describe('TheWelcome', () => {
-  test('displays product names fetched from API', async () => {
-    const mockProducts = [
-      { id: 1, name: 'Product 1', price: 10, description: 'Description 1' },
-      { id: 2, name: 'Product 2', price: 20, description: 'Description 2' }
-    ]
-
-    window.fetch = vi.fn().mockImplementation(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(mockProducts)
-      })
-    )
-
+  test('displays simulator names fetched from API', async () => {
     const wrapper = mount(TheWelcome)
-
     await wrapper.vm.$nextTick()
+    expect(wrapper.text()).toContain('Simulators')
+    await flushPromises()
 
-    const productNames = wrapper.findAll('li').map((li) => li.text())
+    const simulatorNames = wrapper.findAll('li').map((li) => li.text())
+    expect(simulatorNames.length).toBe(2)
+    expect(fetchSimulator).toHaveBeenCalledOnce()
 
-    expect(productNames).toEqual(['Product 1', 'Product 2'])
+    expect(simulatorNames).toEqual(['simulator 1', 'simulator 2'])
   })
 })
