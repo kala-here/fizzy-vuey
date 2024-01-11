@@ -1,11 +1,16 @@
 import { mount } from '@vue/test-utils'
-import TheWelcome from '@/components/TheWelcome.vue'
+import TheWelcome from '../src/components/TheWelcome.vue'
 import { describe, test, expect, vi } from 'vitest'
+import { fetchSimulator } from '../src/services/simulator.service'
 
-window.fetch = vi.fn()
-function createFetchResponse(data) {
-  return { json: () => new Promise((resolve) => resolve(data)) }
-}
+vi.mock('./path/to/module.js', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('./path/to/module.js')>()
+  return {
+    ...mod,
+    // replace some exports
+    namedExport: vi.fn(),
+  }
+})
 describe('TheWelcome', () => {
   test('displays product names fetched from API', async () => {
     const mockProducts = [
@@ -13,7 +18,11 @@ describe('TheWelcome', () => {
       { id: 2, name: 'Product 2', price: 20, description: 'Description 2' }
     ]
 
-    fetch.mockResolvedValue(createFetchResponse(mockProducts))
+    window.fetch = vi.fn().mockImplementation(() =>
+      Promise.resolve({
+        json: () => Promise.resolve(mockProducts)
+      })
+    )
 
     const wrapper = mount(TheWelcome)
 
@@ -23,16 +32,4 @@ describe('TheWelcome', () => {
 
     expect(productNames).toEqual(['Product 1', 'Product 2'])
   })
-
-  // test('displays spinner when products are being fetched', async () => {
-  //   window.fetch = vi.fn().mockImplementation(() => new Promise(() => {}))
-
-  //   const wrapper = mount(TheWelcome)
-
-  //   await wrapper.vm.$nextTick()
-
-  //   const spinner = wrapper.find('.spinner-border')
-
-  //   expect(spinner.exists()).toBe(true)
-  // })
 })
