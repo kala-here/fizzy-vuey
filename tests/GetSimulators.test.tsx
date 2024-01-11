@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import Simulators from '@/components/Simulators.vue'
+import Simulators from '@/components/GetSimulators.vue'
 import { describe, test, expect, vi } from 'vitest'
 import { fetchSimulator } from '@/services/simulator.service'
 
