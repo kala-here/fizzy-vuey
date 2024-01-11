@@ -2,6 +2,10 @@ import { mount } from '@vue/test-utils'
 import TheWelcome from '@/components/TheWelcome.vue'
 import { describe, test, expect, vi } from 'vitest'
 
+window.fetch = vi.fn()
+function createFetchResponse(data) {
+  return { json: () => new Promise((resolve) => resolve(data)) }
+}
 describe('TheWelcome', () => {
   test('displays product names fetched from API', async () => {
     const mockProducts = [
@@ -9,11 +13,7 @@ describe('TheWelcome', () => {
       { id: 2, name: 'Product 2', price: 20, description: 'Description 2' }
     ]
 
-    window.fetch = vi.fn().mockImplementation(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(mockProducts)
-      })
-    )
+    fetch.mockResolvedValue(createFetchResponse(mockProducts))
 
     const wrapper = mount(TheWelcome)
 

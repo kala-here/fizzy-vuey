@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { fetchSimulator } from '@/services/simulator.service'
 
 interface Product {
   id: number
@@ -10,9 +11,13 @@ interface Product {
 
 const products = ref<Product[]>([])
 
-fetch('https://testapi.jasonwatmore.com/products')
-  .then((response) => response.json())
-  .then((data) => (products.value = data))
+fetchSimulator()
+  .then((data) => {
+    products.value = data // Update the products ref with the fetched data
+  })
+  .catch((error) => {
+    console.error('Error fetching products:', error)
+  })
 </script>
 
 <template>
