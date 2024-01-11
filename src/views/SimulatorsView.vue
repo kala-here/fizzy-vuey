@@ -4,6 +4,6 @@ import Simulators from '../components/GetSimulators.vue'
 
 <template>
   <main>
-    <Simulators />
+    <Simulators data-test-id="simulators" />
   </main>
 </template>
